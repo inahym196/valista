@@ -10,6 +10,7 @@
       2015-06-27T01:23:36.867047+00:00: The following VIBs are
       installed:
         vmware-fdm    6.0.0-2656761
+        vmware-hoge    1.1.1-999
       ----------
       (Original Vendor):VMware, Inc.
       2015-06-22T06:24:46.946421+00:00: The following VIBs are
