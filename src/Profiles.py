@@ -1,6 +1,7 @@
-from dataclasses import dataclass, field, asdict
-from typing import Union, Any
 import re
+import yaml
+from typing import Union, Any
+from dataclasses import dataclass, field, asdict
 
 
 @dataclass
@@ -23,18 +24,14 @@ class Profile:
 class Profiles:
     profiles: dict[str, list[Profile]] = field(default_factory=dict)
 
-    def export(self) -> dict[str, Any]:
-        return asdict(self)
 
-
-class ProfileFactor:
+class ProfileConverter:
     def __init__(self, filepath: str, name: str) -> None:
         self.filepath = filepath
         self.name = name
         self.raw_text: list[str] = self.load_text(self.filepath)
-        self.profiles: dict[str, list[Profile]] = dict()
-        self.profiles[name] = self.conv_profiles(self.raw_text)
-        self.__Profiles = Profiles(self.profiles)
+        self.profiles = self.conv_profiles(self.raw_text, name)
+        self.Profiles = Profiles(self.profiles)
 
     @ staticmethod
     def load_text(filepath: str) -> list[str]:
@@ -79,26 +76,33 @@ class ProfileFactor:
 
         return profile
 
-    def conv_profiles(self, text: list[str]) -> list[Profile]:
+    def conv_profiles(self, text: list[str], name: str) -> dict[str, list[Profile]]:
 
         is_parsable_line: bool = False
         start_word = 'The following VIBs are'
         end_word = '----------'
-        profiles: list[Profile] = list()
         profile = Profile()
+        profiles_name = name
+        profiles_value: list[Profile] = list()
 
         for line in text:
             if start_word in line:
                 is_parsable_line = True
             elif end_word in line:
                 is_parsable_line = False
-                profiles.append(profile)
+                profiles_value.append(profile)
 
             if is_parsable_line:
                 profile = self.parse_profile(line)
 
+        profiles: dict[str, list[Profile]] = dict()
+        profiles[profiles_name] = profiles_value
         return profiles
 
-    @ property
-    def Profiles(self) -> Profiles:
-        return self.__Profiles
+    def export(self, filepath: str = ''):
+        profiles_dict: dict[str, Any] = asdict(self.Profiles)
+        if filepath == '':
+            with open(filepath, mode='w') as f:
+                yaml.dump(profiles_dict, f)
+        else:
+            print(yaml.dump(profiles_dict))

@@ -1,7 +1,5 @@
 from argparse import ArgumentParser, Namespace
-from Profiles import ProfileFactor
-from typing import Any
-import yaml
+from Profiles import ProfileConverter
 
 
 def arg_parser() -> Namespace:
@@ -13,20 +11,18 @@ def arg_parser() -> Namespace:
     return parser.parse_args()
 
 
-def profile_exporter(args: Namespace) -> None:
-    profiles_dict: dict[str, Any] = ProfileFactor(
-        filepath=args.src, name=args.name).Profiles.export()
-    if args.dst:
-        with open(args.dst, mode='w') as f:
-            yaml.dump(profiles_dict, f)
-    else:
-        print(yaml.dump(profiles_dict))
+def converter(args: Namespace) -> None:
+    src_filepath = args.src
+    dst_filepath = args.dst
+    name = args.name
+    type = args.type
+    if type == 'profile':
+        ProfileConverter(src_filepath, name).export(dst_filepath)
 
 
 def exec() -> None:
     args = arg_parser()
-    if args.type == 'profile':
-        profile_exporter(args)
+    converter(args)
 
 
 if __name__ == '__main__':
