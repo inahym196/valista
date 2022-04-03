@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, Namespace
-from Convert import *
+from Profiles import ProfileConverter
 
 
 def arg_parser() -> Namespace:
@@ -12,11 +12,12 @@ def arg_parser() -> Namespace:
 
 
 def converter(args: Namespace) -> None:
-    filepath = args.src
+    src_filepath = args.src
+    dst_filepath = args.dst
     name = args.name
     type = args.type
     if type == 'profile':
-        ProfileConverter(filepath, name).export(filepath=args.dst)
+        ProfileConverter(src_filepath, name).export(dst_filepath)
 
 
 def exec() -> None:
