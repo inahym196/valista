@@ -12,12 +12,8 @@ def arg_parser() -> Namespace:
 
 
 def converter(args: Namespace) -> None:
-    src_filepath = args.src
-    dst_filepath = args.dst
-    name = args.name
-    type = args.type
-    if type == 'profile':
-        ProfileConverter(src_filepath, name).export(dst_filepath)
+    if args.type == 'profile':
+        ProfileConverter(filepath=args.src, name=args.name).export(filepath=args.dst)
 
 
 def exec() -> None:
