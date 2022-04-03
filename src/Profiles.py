@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import Union
+from dataclasses import dataclass, field, asdict
+from typing import Union, Any
 import re
 
 
@@ -21,25 +21,27 @@ class Profile:
 
 @dataclass
 class Profiles:
-    profiles: list[Profile] = field(default_factory=list)
+    profiles: dict[str, list[Profile]] = field(default_factory=dict)
 
-    def export(self) -> list[Profile]:
-        return self.profiles
+    def export(self) -> dict[str, Any]:
+        return asdict(self)
 
 
 class ProfileFactor:
-    def __init__(self, filepath: str) -> None:
+    def __init__(self, filepath: str, name: str) -> None:
         self.filepath = filepath
+        self.name = name
         self.raw_text: list[str] = self.load_text(self.filepath)
-        self.__profiles: list[Profile] = self.conv_profiles(self.raw_text)
-        self.__Profiles = Profiles(self.__profiles)
+        self.profiles: dict[str, list[Profile]] = dict()
+        self.profiles[name] = self.conv_profiles(self.raw_text)
+        self.__Profiles = Profiles(self.profiles)
 
-    @staticmethod
+    @ staticmethod
     def load_text(filepath: str) -> list[str]:
         with open(filepath, encoding='UTF-8') as f:
             return f.readlines()
 
-    @staticmethod
+    @ staticmethod
     def parse_profile_element(line: str) -> Union[dict[str, str], Vib]:
         profile_element: dict[str, str] = dict()
         operations = [
@@ -55,7 +57,7 @@ class ProfileFactor:
         apply_date_pattern = re.compile(r'The folowing VIBs are')
 
         if re.match(apply_date_pattern, line):
-            profile_element['apply_date'] = line.split()[0][:-1]
+            profile_element['apply_date'] = line.split()[0][: -1]
             return profile_element
 
         for ope in operations:
