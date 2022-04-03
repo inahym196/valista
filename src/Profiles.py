@@ -30,8 +30,8 @@ class ProfileConverter:
         self.filepath = filepath
         self.name = name
         self.raw_text: list[str] = self.load_text(self.filepath)
-        self.profiles = self.conv_profiles(self.raw_text, name)
-        self.Profiles = Profiles(self.profiles)
+        self.profiles_dict = self.conv_profiles(self.raw_text, name)
+        self.Profiles = Profiles(self.profiles_dict)
 
     @ staticmethod
     def load_text(filepath: str) -> list[str]:
@@ -101,8 +101,9 @@ class ProfileConverter:
 
     def export(self, filepath: str = ''):
         profiles_dict: dict[str, Any] = asdict(self.Profiles)
+        profiles = profiles_dict['profiles']
         if filepath == '':
             with open(filepath, mode='w') as f:
-                yaml.dump(profiles_dict, f)
+                yaml.dump(profiles, f)
         else:
-            print(yaml.dump(profiles_dict))
+            print(yaml.dump(profiles))
