@@ -1,19 +1,30 @@
 from argparse import ArgumentParser, Namespace
-from Profiles import ProfileConverter
+from converter.Profile import ProfileConverter
+from converter.Abstract import BaseConverter
 
 
 def arg_parser() -> Namespace:
     parser = ArgumentParser()
     parser.add_argument('src', nargs='?', default='profile.txt', help='input filepath')
-    parser.add_argument('dst', nargs='?', help='export filepath')
-    parser.add_argument('-n', '--name', default='esxi01', help='profiles yaml\'s root name')
-    parser.add_argument('-t', '--type', default='profile', help='source file type')
-    return parser.parse_args()
+    parser.add_argument('dst', nargs='?', help='output filepath')
+    parser.set_defaults(converter=BaseConverter)
+
+    subparsers = parser.add_subparsers()
+    subparsers.required = True
+    parser_profile = subparsers.add_parser('profile', help='esxi profile converter')
+    parser_profile.add_argument('-n', '--name', required=True,
+                                help='hostname to which the profile is applied')
+    parser_profile.set_defaults(converter=ProfileConverter)
+
+    args = parser.parse_args()
+    return args
 
 
 def converter(args: Namespace) -> None:
-    if args.type == 'profile':
-        ProfileConverter(filepath=args.src, name=args.name).export(filepath=args.dst)
+    option = vars(args)
+    if hasattr(args, 'converter'):
+        converter: BaseConverter = args.converter()
+        converter.export(input_filepath=args.src, output_filepath=args.dst, option=option)
 
 
 def exec() -> None:
