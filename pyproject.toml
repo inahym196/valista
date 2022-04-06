@@ -12,6 +12,8 @@ types-PyYAML = "^6.0.5"
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
 autopep8 = "^1.6.0"
+mypy = "^0.942"
+flake8 = "^4.0.1"
 
 [tool.poetry.scripts]
 exec = "cli:exec"
