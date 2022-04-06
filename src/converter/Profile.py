@@ -28,7 +28,7 @@ class Profiles:
 class ProfileConverter(BaseConverter):
 
     def matches_apply_date_pattern(self, line: str) -> bool:
-        apply_date_pattern = re.compile(r'The following VIBs are')
+        apply_date_pattern = re.compile(r'The following VIBs (are|has been)')
         if re.search(apply_date_pattern, line):
             return True
         return False
