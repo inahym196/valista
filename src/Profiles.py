@@ -10,14 +10,11 @@ class Vib:
     version: str
 
 
-Vibs = list[Vib]
-
-
 @dataclass
 class Profile:
     apply_date: str = ''
     operation: str = ''
-    vibs: Vibs = field(default_factory=list)
+    vibs: list[Vib] = field(default_factory=list)
 
 
 @dataclass

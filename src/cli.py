@@ -1,5 +1,5 @@
 from argparse import ArgumentParser, Namespace
-from Profiles import ProfileConverter
+from .Profiles import ProfileConverter
 
 
 def arg_parser() -> Namespace:
